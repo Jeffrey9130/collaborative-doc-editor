@@ -345,11 +345,24 @@ export default function DocumentEditor() {
           title: "已保存",
           description: "文档已自动保存",
         })
+      } else if (response.status === 404) {
+        toast({
+          title: "错误",
+          description: "文档不存在，正在返回文档列表",
+          variant: "destructive",
+        })
+        navigate('/')
+      } else {
+        toast({
+          title: "保存失败",
+          description: "无法保存文档",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       toast({
         title: "保存失败",
-        description: "无法保存文档",
+        description: "网络连接失败",
         variant: "destructive",
       })
     } finally {
@@ -402,11 +415,24 @@ export default function DocumentEditor() {
           title: "版本已恢复",
           description: `已恢复到版本 ${version.version}`,
         })
+      } else if (response.status === 404) {
+        toast({
+          title: "错误",
+          description: "文档不存在，正在返回文档列表",
+          variant: "destructive",
+        })
+        navigate('/')
+      } else {
+        toast({
+          title: "错误",
+          description: "无法恢复版本",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       toast({
         title: "错误",
-        description: "无法恢复版本",
+        description: "网络连接失败",
         variant: "destructive",
       })
     }
