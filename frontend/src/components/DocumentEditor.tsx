@@ -169,7 +169,7 @@ export default function DocumentEditor() {
   }
 
   const connectWebSocket = () => {
-    const wsUrl = `ws://localhost:8000/ws/${id}`
+    const wsUrl = API_URL.replace('http://', 'ws://').replace('https://', 'wss://') + `/ws/${id}`
     const websocket = new WebSocket(wsUrl)
     
     websocket.onopen = () => {
