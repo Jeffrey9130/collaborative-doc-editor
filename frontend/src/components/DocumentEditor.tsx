@@ -173,6 +173,7 @@ export default function DocumentEditor() {
     const websocket = new WebSocket(wsUrl)
     
     websocket.onopen = () => {
+      console.log('WebSocket connected')
       setIsConnected(true)
       setWs(websocket)
       
@@ -207,6 +208,7 @@ export default function DocumentEditor() {
     }
     
     websocket.onclose = () => {
+      console.log('WebSocket disconnected')
       setIsConnected(false)
       setTimeout(() => connectWebSocket(), 3000)
     }
@@ -239,9 +241,12 @@ export default function DocumentEditor() {
   }
 
   const handleRemoteCursor = (cursor: CursorPosition) => {
+    console.log('Received cursor data:', cursor)
     setCursors(prev => {
       const filtered = prev.filter(c => c.user_id !== cursor.user_id)
-      return [...filtered, cursor]
+      const newCursors = [...filtered, cursor]
+      console.log('Updated cursors:', newCursors)
+      return newCursors
     })
   }
 
@@ -262,7 +267,7 @@ export default function DocumentEditor() {
     const newContent = e.target.value
     const cursorPosition = e.target.selectionStart
     
-    if (!document || !currentUser || !ws) return
+    if (!document || !currentUser || !ws || ws.readyState !== WebSocket.OPEN) return
     
     const oldContent = document.content
     const operation = calculateOperation(oldContent, newContent, cursorPosition)
@@ -310,7 +315,7 @@ export default function DocumentEditor() {
   }
 
   const handleCursorChange = () => {
-    if (!textareaRef.current || !currentUser || !ws) return
+    if (!textareaRef.current || !currentUser || !ws || ws.readyState !== WebSocket.OPEN) return
     
     const position = textareaRef.current.selectionStart
     const selectionEnd = textareaRef.current.selectionEnd
@@ -582,10 +587,11 @@ export default function DocumentEditor() {
                       key={cursor.user_id}
                       className="absolute pointer-events-none"
                       style={{
-                        left: `${cursor.position * 0.5}ch`,
-                        top: `${Math.floor(cursor.position / 80) * 1.5}em`,
+                        left: `${cursor.position * 0.6}ch`,
+                        top: `${Math.floor(cursor.position / 100) * 1.5}em`,
                         borderLeft: `2px solid ${user.color}`,
-                        height: '1.2em'
+                        height: '1.2em',
+                        zIndex: 10
                       }}
                     >
                       <div
